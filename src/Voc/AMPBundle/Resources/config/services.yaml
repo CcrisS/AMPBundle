@@ -1,0 +1,8 @@
+parameters:
+    voc.amp.twig.amp_extension.class: Voc\AMPBundle\Twig\AMPExtension
+
+services:
+    voc.amp.twig.amp_extension:
+        class: "%voc.amp.twig.amp_extension.class%"
+        tags:
+            - { name: twig.extension }
