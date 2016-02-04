@@ -13,17 +13,17 @@
     ],
     "require": {
         "php": ">=5.3.3",
-        "psr/log": "~1.0",
-        "symfony/dependency-injection": "~2.3",
-        "symfony/config": "~2.3",
         "twig/twig": "1.20.0"
     },
     "require-dev": {
+        "symfony/dependency-injection": "~2.3",
+        "symfony/config": "~2.3",
         "phpunit/phpunit": "~4.1"
     },
     "autoload": {
-        "psr-0": {
-            "Voc\\AMPBundle": "src/"
-        }
+        "psr-4": { "Voc\\AMPBundle\\": "" },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
     }
 }

@@ -1,13 +1,13 @@
 <?php
 /**
- * AMPExtension.php
+ * Sanitizer.php
  *
  * Ariel Ferrandini <arielferrandini@gmail.com>
- * 13/01/16
+ * 04/02/16
  */
-namespace Voc\AMPBundle\Twig;
+namespace Voc\AMPBundle\Sanitizer;
 
-class AMPExtension extends \Twig_Extension
+class Sanitizer implements SanitizerInterface
 {
     /**
      * Allowed TAGS getted from
@@ -15,7 +15,7 @@ class AMPExtension extends \Twig_Extension
      * https://github.com/ampproject/amphtml/blob/master/spec/amp-tag-addendum.md
      */
     const ALLOWED_TAGS = array(
-         // The root element
+        // The root element
         '<html>',
 
         // Document metadata
@@ -164,40 +164,27 @@ class AMPExtension extends \Twig_Extension
     );
 
     /**
-     * @inheritDoc
-     */
-    public function getFilters()
-    {
-        return array(
-            'removeDisallowedAMPTags' => new \Twig_Filter_Method($this, 'removeDisallowedAMPTags'),
-        );
-    }
-
-
-    /**
-     * Removes the disallowed tags by AMP
+     * Disallowed ATTRIBUTES
      *
-     * @param $html
-     * @return string
+     * https://github.com/ampproject/amphtml/blob/master/spec/amp-tag-addendum.md
      */
-    public function removeDisallowedAMPTags($html)
-    {
-        return strip_tags($html, $this->getAllowedTags());
-    }
-
-    /**
-     * @return string
-     */
-    private function getAllowedTags()
-    {
-        return implode('', self::ALLOWED_TAGS);
-    }
+    const DISALLOWED_ATTRIBUTES = array(
+        'style'
+    );
 
     /**
      * @inheritDoc
      */
-    public function getName()
+    public function sanitize($html)
     {
-        return 'amp';
+        // Remove disallowed tags
+        $html = strip_tags($html, implode('', self::ALLOWED_TAGS));
+
+        // Remove disallowed attributes
+        foreach (self::DISALLOWED_ATTRIBUTES as $attribute) {
+            $html = preg_replace('/ ' . $attribute . '=\\"[^\\"]*\\"/', '', $html);
+        }
+
+        return $html;
     }
 }

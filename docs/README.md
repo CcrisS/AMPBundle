@@ -15,7 +15,7 @@ Para instalar el bundle `AMPBundle` agrega las siguientes líneas al archivo `co
     ...
     
     "require": {
-        "vocento/amp-bundle": "1.0"
+        "vocento/amp-bundle": "2.0"
     },
     
     ...

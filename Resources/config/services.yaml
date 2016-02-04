@@ -1,0 +1,19 @@
+parameters:
+    voc.amp.sanitizer.class: Voc\AMPBundle\Sanitizer\Sanitizer
+    voc.amp.twig.amp_extension.class: Voc\AMPBundle\Twig\AMPExtension
+
+services:
+    voc.amp.sanitizer.sanitizer:
+        class: "%voc.amp.sanitizer.class%"
+        public: false
+
+    voc.amp.sanitizer:
+        alias: "voc.amp.sanitizer.sanitizer"
+
+    voc.amp.twig.amp_extension:
+        class: "%voc.amp.twig.amp_extension.class%"
+        public: false
+        arguments:
+            - "@voc.amp.sanitizer"
+        tags:
+            - { name: twig.extension }
