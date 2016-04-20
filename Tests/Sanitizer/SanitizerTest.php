@@ -35,31 +35,114 @@ class SanitizerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider getInvalidHTMLTags
      */
-    public function testSanitizeInvalidHTMLTags($html, $expected) {
+    public function testSanitizeInvalidHTMLTags($html, $expected)
+    {
         $this->assertEquals($expected, $this->sanitizer->sanitize($html));
     }
 
     /**
      * @dataProvider getInvalidHTMLAttributes
      */
-    public function testSanitizeInvalidHTMLAttributes($html, $expected) {
+    public function testSanitizeInvalidHTMLAttributes($html, $expected)
+    {
         $this->assertEquals($expected, $this->sanitizer->sanitize($html));
     }
 
-    public function getInvalidHTMLTags() {
+    /**
+     * @dataProvider getInvalidHTMLAttributesWithValue
+     */
+    public function testSanitizeInvalidHTMLAttributesWithValue($html, $expected)
+    {
+        $this->assertEquals($expected, $this->sanitizer->sanitize($html));
+    }
+
+    /**
+     * @dataProvider getInvalidHTMLAttributeValue
+     */
+    public function testSanitizeInvalidHTMLAttributeValue($html, $expected)
+    {
+        $this->assertEquals($expected, $this->sanitizer->sanitize($html));
+    }
+
+    public function getInvalidHTMLTags()
+    {
         $cases = array();
 
-        array_push($cases, array('<html><head></head><body><img></img></body></html>', '<html><head></head><body></body></html>'));
-        array_push($cases, array('<html><head></head><body><amp-img></amp-img></body></html>', '<html><head></head><body><amp-img></amp-img></body></html>'));
-        array_push($cases, array('<html><head></head><body><img></img><p><amp-img></amp-img></p></body></html>', '<html><head></head><body><p><amp-img></amp-img></p></body></html>'));
+        array_push(
+            $cases,
+            array('<html><head></head><body><img></img></body></html>', '<html><head></head><body></body></html>')
+        );
+        array_push(
+            $cases, array(
+                '<html><head></head><body><amp-img></amp-img></body></html>',
+                '<html><head></head><body><amp-img></amp-img></body></html>'
+            )
+        );
+        array_push(
+            $cases, array(
+                '<html><head></head><body><img></img><p><amp-img></amp-img></p></body></html>',
+                '<html><head></head><body><p><amp-img></amp-img></p></body></html>'
+            )
+        );
 
         return $cases;
     }
-    public function getInvalidHTMLAttributes() {
+
+    public function getInvalidHTMLAttributes()
+    {
         $cases = array();
 
         foreach (Sanitizer::DISALLOWED_ATTRIBUTES as $attribute) {
-            array_push($cases, array('<html><head></head><body><p ' . $attribute . '="valor">content</p></body></html>', '<html><head></head><body><p>content</p></body></html>'));
+            array_push(
+                $cases, array(
+                    '<html><head></head><body><p ' . $attribute . '="valor">content</p></body></html>',
+                    '<html><head></head><body><p>content</p></body></html>'
+                )
+            );
+        }
+
+        return $cases;
+    }
+
+    public function getInvalidHTMLAttributesWithValue()
+    {
+        $cases = array();
+
+        foreach (Sanitizer::DISALLOWED_ATTRIBUTES_WITH_VALUE as $attribute => $value) {
+            array_push(
+                $cases, array(
+                    '<html><head></head><body><p ' . $attribute .'="' . $value .'">content</p></body></html>',
+                    "<html><head></head><body><p>content</p></body></html>"
+                )
+            );
+            array_push(
+                $cases, array(
+                    '<html><head></head><body><p ' . $attribute .'=\'' . $value .'\'>content</p></body></html>',
+                    "<html><head></head><body><p>content</p></body></html>"
+                )
+            );
+        }
+
+        return $cases;
+    }
+
+    public function getInvalidHTMLAttributeValue()
+    {
+        $cases = array();
+
+        foreach (Sanitizer::DISALLOWED_ATTRIBUTES_VALUE as $attribute => $value) {
+            array_push(
+                $cases, array(
+                    '<html><head></head><body><p ' . $attribute . '=\'' . $value .'\'>content</p></body></html>',
+                    '<html><head></head><body><p ' . $attribute . '="">content</p></body></html>'
+                )
+            );
+            array_push(
+                $cases, array(
+                    '<html><head></head><body><p ' . $attribute . '="' . $value .'">content</p></body></html>',
+                    '<html><head></head><body><p ' . $attribute . '="">content</p></body></html>'
+                )
+            );
         }
 
         return $cases;

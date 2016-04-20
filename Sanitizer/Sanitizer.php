@@ -1,12 +1,17 @@
 <?php
-/**
- * Sanitizer.php
+
+/*
+ * (c) 2016 Vocento S.A., <desarrollo.dts@vocento.com>
  *
- * Ariel Ferrandini <arielferrandini@gmail.com>
- * 04/02/16
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 namespace Voc\AMPBundle\Sanitizer;
 
+/**
+ * @author Ariel Ferrandini <aferrandini@vocento.com>
+ * @author Laura Garcia Rivas <lgarciari@vocento.com>
+ */
 class Sanitizer implements SanitizerInterface
 {
     /**
@@ -23,7 +28,7 @@ class Sanitizer implements SanitizerInterface
         '<title>',
         '<link>',
         '<meta>',
-        '<style>',
+        // '<style>',
 
         // Sections
         '<body>',
@@ -160,7 +165,8 @@ class Sanitizer implements SanitizerInterface
         '<amp-pixel>',
         '<amp-audio>',
         '<amp-lightbox>',
-        '<amp-image-lightbox>',
+        '<amp-image-lightbox>'
+
     );
 
     /**
@@ -169,7 +175,29 @@ class Sanitizer implements SanitizerInterface
      * https://github.com/ampproject/amphtml/blob/master/spec/amp-tag-addendum.md
      */
     const DISALLOWED_ATTRIBUTES = array(
-        'style'
+        'style',
+        'datetime',
+        'cite',
+        'channel',
+        'summary'
+    );
+
+    /**
+     * Disallowed ATTRIBUTES with a value
+     *
+     * https://github.com/ampproject/amphtml/blob/master/spec/amp-tag-addendum.md
+     */
+    const DISALLOWED_ATTRIBUTES_WITH_VALUE = array(
+        'target' => '_top',
+    );
+
+    /**
+     * Disallowed ATTRIBUTE value
+     *
+     * https://github.com/ampproject/amphtml/blob/master/spec/amp-tag-addendum.md
+     */
+    const DISALLOWED_ATTRIBUTES_VALUE = array(
+        'rel' => 'stylesheet'
     );
 
     /**
@@ -183,6 +211,16 @@ class Sanitizer implements SanitizerInterface
         // Remove disallowed attributes
         foreach (self::DISALLOWED_ATTRIBUTES as $attribute) {
             $html = preg_replace('/ ' . $attribute . '=\\"[^\\"]*\\"/', '', $html);
+        }
+
+        // Remove disallowed attributes with value
+        foreach (self::DISALLOWED_ATTRIBUTES_WITH_VALUE as $attribute => $value) {
+            $html = preg_replace('/ ' . $attribute . "=['|\"]" . $value . "['|\"]/", '', $html);
+        }
+
+        // Remove disallowed attributes values
+        foreach (self::DISALLOWED_ATTRIBUTES_VALUE as $attribute => $value) {
+            $html = preg_replace('/ ' . $attribute . "=['|\"]" . $value . "['|\"]/", ' ' . $attribute . '=""', $html);
         }
 
         return $html;
