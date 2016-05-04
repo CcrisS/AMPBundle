@@ -100,7 +100,7 @@ class Sanitizer implements SanitizerInterface
         '<del>',
 
         // Embedded Content
-        '<source>',
+        //'<source>',
 
         // SVG
         '<svg>',
@@ -179,7 +179,12 @@ class Sanitizer implements SanitizerInterface
         'datetime',
         'cite',
         'channel',
-        'summary'
+		'summary',
+        'onclick',
+        'target',
+        'cellspacing',
+        'border',
+        'data-src'
     );
 
     /**
@@ -189,6 +194,7 @@ class Sanitizer implements SanitizerInterface
      */
     const DISALLOWED_ATTRIBUTES_WITH_VALUE = array(
         'target' => '_top',
+		'href' => 'file:'
     );
 
     /**
@@ -215,7 +221,7 @@ class Sanitizer implements SanitizerInterface
 
         // Remove disallowed attributes with value
         foreach (self::DISALLOWED_ATTRIBUTES_WITH_VALUE as $attribute => $value) {
-            $html = preg_replace('/ ' . $attribute . "=['|\"]" . $value . "['|\"]/", '', $html);
+            $html = preg_replace('/ ' . $attribute . "=['|\"]" . $value . "['|\"]*/", '', $html);
         }
 
         // Remove disallowed attributes values
